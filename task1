@@ -1,0 +1,131 @@
+#1.urllib的request
+# 导入urllib.request库
+import urllib.request   
+#定义一个接受网址的url
+url = 'https://www.baidu.com/'
+#用urlopen打开请求的网页
+response = urllib.request.urlopen(url)
+#读取
+response = response.read()
+
+print(response)
+结果：b'<html>\r\n<head>\r\n\t<script>\r\n\t\tlocation.replace(location.href.replace("https://","http://"));
+\r\n\t</script>\r\n</head>\r\n<body>\r\n\t<noscript><meta http-equiv="refresh" content="0;url=http://www.baidu.com/">
+</noscript>\r\n</body>\r\n</html>'
+
+
+import requests
+
+url = 'https://www.baidu.com/'
+#使用requests的geT方法
+response = requests.get(url)
+
+print(response)
+
+#获得网页源代码
+print(response.text)
+
+#正则表达式的使用
+## ^ 匹配字符串的开始。
+## $ 匹配字符串的结尾。
+## \b 匹配一个单词的边界。
+## \d 匹配任意数字。
+## \D 匹配任意非数字字符。
+## x? 匹配一个可选的 x 字符 (换言之，它匹配 1 次或者 0 次 x 字符)。
+## x* 匹配0次或者多次 x 字符。
+## x+ 匹配1次或者多次 x 字符。
+## x{n,m} 匹配 x 字符，至少 n 次，至多 m 次。
+## (a|b|c) 要么匹配 a，要么匹配 b，要么匹配 c。
+## (x) 一般情况下表示一个记忆组 (remembered group)。你可以利用 re.search 函数返回对象的 groups() 函数获取它的值。
+## 正则表达式中的点号通常意味着 “匹配任意单字符”
+# -*- coding: cp936 -*-
+import re
+ 
+string="A1.45，b5，6.45，8.82"
+print re.findall(r"\d+\.?\d*",string)
+ 
+# ['1.45', '5', '6.45', '8.82']
+
+#获取一个页面的数据
+url = 'https://movie.douban.com/top250?start=1'
+text = openurl(url)
+print(text)
+#部分内容展示
+            <div class="item">
+                <div class="pic">
+                    <em class="">2</em>
+                    <a href="https://movie.douban.com/subject/1291546/">
+                        <img width="100" alt="霸王别姬" src="https://img3.doubanio.com/view/photo/s_ratio_poster/public/p1488213971.jpg" class="">
+                    </a>
+                </div>
+                <div class="info">
+                    <div class="hd">
+                        <a href="https://movie.douban.com/subject/1291546/" class="">
+                            <span class="title">霸王别姬</span>
+                                <span class="other">&nbsp;/&nbsp;再见，我的妾  /  Farewell My Concubine</span>
+                        </a>
+
+
+                            <span class="playable">[可播放]</span>
+                    </div>
+                    <div class="bd">
+                        <p class="">
+                            导演: 陈凯歌 Kaige Chen&nbsp;&nbsp;&nbsp;主演: 张国荣 Leslie Cheung / 张丰毅 Fengyi Zha...<br>
+                            1993&nbsp;/&nbsp;中国大陆 香港&nbsp;/&nbsp;剧情 爱情 同性
+                        </p>
+
+                        
+                        <div class="star">
+                                <span class="rating5-t"></span>
+                                <span class="rating_num" property="v:average">9.6</span>
+                                <span property="v:best" content="10.0"></span>
+                                <span>1128901人评价</span>
+                        </div>
+ #主要的信息
+ 第2名 霸王别姬  导演: 陈凯歌 主演: 张国荣 Leslie Cheung / 张丰毅 1993&nbsp;/&nbsp;中国大陆 香港&nbsp;/&nbsp;剧情 爱情 同性
+ 1128901人评价
+ 
+                        
+def openurl(url):
+   user_agent = 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)'
+   headers = {'User-Agent': user_agent}
+   try:
+       r = requests.get(url, headers = headers, timeout = 20)
+       r.raise_for_status()
+       r.encoding = r.apparent_encoding
+       return r.text
+   except:
+       print('无法访问网页' + url)
+       
+       
+if __name__ == '__main__':
+    douban_250 = []
+
+    for i in range(10):
+        url = 'https://movie.douban.com/top250?start='
+        url += str(i * 25)
+        text = openurl(url)
+        ranks = re.findall('<em class="">(.*)</em>', text)
+        movie_names = re.findall('<img width="100" alt="(.*)" src="https', text)
+        counties = re.findall('&nbsp;/&nbsp;(.*)&nbsp;/&nbsp;',text)
+        directors = re.findall('导演: (.*)&nbsp;&nbsp;&nbsp;主演', text)
+
+        z = zip(ranks, movie_names, counties, directors)
+        for i in z:
+            douban_250.append(i)
+
+    with open('douban250.txt', 'w') as f:
+        for i in douban_250:
+            f.writelines(str(i) + '\n')
+结果
+('1', '肖申克的救赎', '美国', '弗兰克·德拉邦特 Frank Darabont')
+('2', '霸王别姬', '中国大陆 香港', '陈凯歌 Kaige Chen')
+('3', '这个杀手不太冷', '法国', '吕克·贝松 Luc Besson')
+('4', '阿甘正传', '美国', '罗伯特·泽米吉斯 Robert Zemeckis')
+('5', '美丽人生', '意大利', '罗伯托·贝尼尼 Roberto Benigni')
+('6', '千与千寻', '日本', '宫崎骏 Hayao Miyazaki')
+('7', '泰坦尼克号', '美国', '詹姆斯·卡梅隆 James Cameron')
+('8', '辛德勒的名单', '美国', '史蒂文·斯皮尔伯格 Steven Spielberg')
+('9', '盗梦空间', '美国 英国', '克里斯托弗·诺兰 Christopher Nolan')
+('10', '忠犬八公的故事', '美国 英国', '莱塞·霍尔斯道姆 Lasse Hallstr
+ 
