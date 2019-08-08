@@ -1,0 +1,71 @@
+Beautiful Soup简介：
+ 提供一些简单的、python 式的函数用来处理导航、搜索、修改分析树等功能。它是一个工具箱，通过解析文档为用户提供需要抓取的数据，因为简单，
+ 所以不需要多少代码就可以写出一个完整的应用程序。Beautiful Soup 自动将输入文档转换为 Unicode 编码，输出文档转换为 utf-8 编码。你不
+ 需要考虑编码方式，除非文档没有指定一个编码方式，这时，Beautiful Soup 就不能自动识别编码方式了。然后，你仅仅需要说明一下原始编码方式
+ 就可以了。Beautiful Soup 已成为和 lxml、html6lib 一样出色的 python 解释器，为用户灵活地提供不同的解析策略或强劲的速度。
+ 
+ 四大对象种类
+Beautiful Soup 将复杂HTML文档转换成一个复杂的树形结构,每个节点都是 Python 对象,所有对象可以归纳为4种:
+
+Tag
+NavigableString
+BeautifulSoup
+Comment
+
+爬取帖子的代码
+import urllib.request
+from bs4 import BeautifulSoup as bs
+def main():
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) "
+                          "Chrome/58.0.3029.110 Safari/537.36 SE 2.X MetaSr 1.0"
+    }
+    url = 'http://www.dxy.cn/bbs/topic/41714071'
+    request = urllib.request.Request(url, headers=headers)
+    response = urllib.request.urlopen(request).read().decode("utf-8")
+    html = bs(response, 'lxml')
+    getItem(html)
+def getItem(html):
+    datas = [] # 用来存放获取的用户名和评论
+    for data in html.find_all("tbody"):
+        try:
+            userid = data.find("div", class_="auth").get_text(strip=True)
+            print(userid)
+            content = data.find("td", class_="postbody").get_text(strip=True)
+            print(content)
+            datas.append((userid,content))
+        except:
+            pass
+    print(datas)
+
+
+
+if __name__ == '__main__':
+    main()
+#   
+#爬取显示的内容
+lightningwing
+「刚开始，我可能只是一根火光微弱的火柴。火柴光虽然很小，但能慢慢照亮四周。而且通过成长，我能用自己的力量去影响别人。」——周南以此，纪念周南医师。
+天狼星2008
+向周南医生致敬！这是和平时期的烈士，共和国的脊梁，希望她的亲人能够得到妥善安置和抚养！也希望我们给予援疆援藏专家和技术人员更多的关注，改善他们
+的生活条件，衣食住行和安全都要得到有效的保障，而不是单纯的要求奉献，可以奉献，但是不要风险！
+耍耍dada
+还记得小时候 因为自己和母亲身体都不好 总是生病 我当时就想 如果长大了能成为一名医生就好了 25年过去了 我有幸成为一名医学研究生 但是初心早已被磨
+灭了 我老师交给我的都是如何保护自己 同事 上级之间如何推责 如何多发文章 而临床不重要 没人管  我也表示很想转行 很想去当一名专科的老师 事实上 自
+己就过着一眼望到头的日子 我也很痛苦致敬周南医生 一路走好
+feiji1984
+我注意到讣告中有一个“原”字，意味着她确实已经离开了原来的医院，而如果参加无国界活动是真的话，意味着她说的“想再去更大的世界去看看，去那些比较危
+险，但有意思的地方。”这句话是真的，意味着她心中可能有一个更庞大的计划，如果说强者的勇敢是出于自私的话，那么真正圣者的勇气和无畏则只能用一句古
+语来形容：胸怀天下，心系苍生，这就是所谓的“强者自救，圣者度人”的真正含义吧
+
+什么是 XPath?
+XPath即为XML路径语言（XML Path Language），它是一种用来确定XML文档中某部分位置的语言。
+在 XPath 中，有七种类型的节点：元素、属性、文本、命名空间、处理指令、注释以及文档（根）节点。XML 文档是被作为节点树来对待的。
+
+用户名称：tree.xpath(’//div[@class=“auth”]/a/text()’)
+回复内容：tree.xpath(’//td[@class=“postbody”]’) 因为回复内容中有换行等标签，所以需要用string()来获取数据。
+Xpath中text()，string()，data()的区别如下：
+text()仅仅返回所指元素的文本内容。
+string()函数会得到所指元素的所有节点文本内容，这些文本讲会被拼接成一个字符串。
+data()大多数时候，data()函数和string()函数通用，而且不建议经常使用data()函数，有数据表明，该函数会影响XPath的性能。
+
